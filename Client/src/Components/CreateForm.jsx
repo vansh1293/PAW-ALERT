@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useGeocoding from './Hooks/useGeocoding';
 
 const CreateForm = () => {
     const [image, setImage] = useState(null);
@@ -10,7 +11,7 @@ const CreateForm = () => {
         location: '',
         description: ''
     });
-
+    const { coordinates, error, getCoordinates } = useGeocoding();
     const handleInputChange = (event) => {
         const { id, value } = event.target;
         setFormData((prevState) => ({
@@ -29,7 +30,7 @@ const CreateForm = () => {
     const validPhone = /^\d{10}$/;
     const validLocation = /^[a-zA-Z0-9\s.,'-]+$/;
     const validDescription = /^[a-zA-Z0-9\s.,'-]+$/;
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const { name, phone, location, description } = formData;
         if (!name.trim() || !phone.trim() || !location.trim() || !description.trim()) {
@@ -67,6 +68,22 @@ const CreateForm = () => {
                 position: "top-right", autoClose: 3000, closeOnClick: true
             });
             return;
+        }
+        await getCoordinates(location);
+        if (error) {
+            alert(error);
+            toast.error(`Can't find ${location}`, {
+                position: "top-right",
+                autoClose: 3000,
+                closeOnClick: true,
+            });
+            return;
+        }
+        if (coordinates) {
+            const lat = coordinates.lat;
+            const lng = coordinates.lng;
+            const formDataWithCoordinates = { ...formData, lat, lng };
+            console.log(formDataWithCoordinates);
         }
     }
     return (
