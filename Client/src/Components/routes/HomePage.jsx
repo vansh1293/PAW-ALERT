@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Bear from '../Assets/Bear.png';
-import Bird from '../Assets/Bird.png';
-import Flamingo from '../Assets/Flamingo.png';
+import Bear from '../../Assets/Bear.png';
+import Bird from '../../Assets/Bird.png';
+import Flamingo from '../../Assets/Flamingo.png';
 
 const HomePage = () => {
     return (
