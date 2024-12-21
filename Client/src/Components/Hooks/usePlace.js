@@ -1,26 +1,27 @@
 import { useState } from "react";
 
 const usePlace = () => {
-    const [placeid, setPlaceid] = useState(null);
+    const [phonenumber, setphonenumber] = useState(null);
     const [errorinplace, setError] = useState(null);
 
-    const getPlace = async (lat, lng) => {
+    const getPhoneNumber = async (lat, lng) => {
         setError(null);
         const apikey = import.meta.env.VITE_API_KEY;
         try {
             const response = await fetch(`http://localhost:3000/api/places?lat=${lat}&lng=${lng}`);
             const data = await response.json();
-
-            if (data.placeId) {
-                setPlaceid(data.placeId);  // Store the placeId in state
+            if (data.formattedPhoneNumber) {
+                setphonenumber(data.formattedPhoneNumber);
+            } else if (data.error) {
+                setError(data.error);
             } else {
-                setError("No clinic found.");
+                setError("Can't find Shelter Near You.");
             }
         } catch (err) {
             console.error('Error fetching place data:', err);
-            setError("An error occurred while fetching place data.");
+            setError("An error occurred while fetching clinic near you.");
         }
     };
-    return { placeid, errorinplace, getPlace };
+    return { phonenumber, errorinplace, getPhoneNumber };
 };
 export default usePlace;

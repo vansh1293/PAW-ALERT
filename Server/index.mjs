@@ -11,7 +11,6 @@ app.use(cors());
 app.get('/api/places', async (req, res) => {
     const { lat, lng } = req.query;
     const apikey = process.env.GOOGLE_API_KEY;
-    console.log(apikey);
     const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&keyword=veterinary+clinic&key=${apikey}`;
     try {
         const response = await fetch(apiUrl);
@@ -19,7 +18,13 @@ app.get('/api/places', async (req, res) => {
 
         if (data.results && data.results.length > 0) {
             const placeId = data.results[0].place_id;
-            res.json({ placeId });
+            const placeDetailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_phone_number,website&key=${apikey}`;
+            const placeDetailsResponse = await fetch(placeDetailsUrl);
+            const placeDetailsData = await placeDetailsResponse.json();
+            if (placeDetailsData.result) {
+                const formattedPhoneNumber = placeDetailsData.result.formatted_phone_number;
+                res.json({ formattedPhoneNumber });
+            }
         } else {
             res.status(404).json({ error: "No results found" });
         }
@@ -30,5 +35,4 @@ app.get('/api/places', async (req, res) => {
 });
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-    console.log(process.env.GOOGLE_API_KEY);
 });

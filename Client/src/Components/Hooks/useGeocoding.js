@@ -14,7 +14,6 @@ function useGeocoding() {
                 throw new Error("Failed to fetch coordinates");
             }
             const data = await response.json();
-            console.log("API Response:", data);
             if (!data.results || data.results.length === 0) {
                 throw new Error("No results found for the provided address.");
             }

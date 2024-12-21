@@ -2,11 +2,7 @@ import React, { useState } from 'react'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useGeocoding from './Hooks/useGeocoding';
-<<<<<<< HEAD
 import usePlace from './Hooks/usePlace';
-=======
->>>>>>> 8d25ba30b716d78ac537da6664dea09612fd7cd0
-
 const CreateForm = () => {
     const [image, setImage] = useState(null);
     const [formData, setFormData] = useState({
@@ -16,10 +12,7 @@ const CreateForm = () => {
         description: ''
     });
     const { coordinates, error, getCoordinates } = useGeocoding();
-<<<<<<< HEAD
-    const { placeid, errorinplace, getPlace } = usePlace();
-=======
->>>>>>> 8d25ba30b716d78ac537da6664dea09612fd7cd0
+    const { phonenumber, errorinplace, getPhoneNumber } = usePlace();
     const handleInputChange = (event) => {
         const { id, value } = event.target;
         setFormData((prevState) => ({
@@ -79,10 +72,7 @@ const CreateForm = () => {
         }
         await getCoordinates(location);
         if (error) {
-<<<<<<< HEAD
-=======
             alert(error);
->>>>>>> 8d25ba30b716d78ac537da6664dea09612fd7cd0
             toast.error(`Can't find ${location}`, {
                 position: "top-right",
                 autoClose: 3000,
@@ -93,26 +83,21 @@ const CreateForm = () => {
         if (coordinates) {
             const lat = coordinates.lat;
             const lng = coordinates.lng;
-<<<<<<< HEAD
             if (lat && lng) {
-                await getPlace(lat, lng);
+                await getPhoneNumber(lat, lng);
                 if (errorinplace) {
                     alert(errorinplace);
-                    toast.error("Can't find Shelter Near You", {
+                    toast.error("Can't find Clinic Near You", {
                         position: "top-right",
                         autoClose: 3000,
                         closeOnClick: true,
                     });
                     return;
                 }
-                if (placeid) {
-                    console.log(placeid);
+                if (phonenumber) {
+                    console.log(phonenumber);
                 }
             }
-=======
-            const formDataWithCoordinates = { ...formData, lat, lng };
-            console.log(formDataWithCoordinates);
->>>>>>> 8d25ba30b716d78ac537da6664dea09612fd7cd0
         }
     }
     return (
