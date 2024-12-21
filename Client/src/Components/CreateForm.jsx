@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useGeocoding from './Hooks/useGeocoding';
+import usePlace from './Hooks/usePlace';
 
 const CreateForm = () => {
     const [image, setImage] = useState(null);
@@ -12,6 +13,7 @@ const CreateForm = () => {
         description: ''
     });
     const { coordinates, error, getCoordinates } = useGeocoding();
+    const { placeid, errorinplace, getPlace } = usePlace();
     const handleInputChange = (event) => {
         const { id, value } = event.target;
         setFormData((prevState) => ({
@@ -71,7 +73,6 @@ const CreateForm = () => {
         }
         await getCoordinates(location);
         if (error) {
-            alert(error);
             toast.error(`Can't find ${location}`, {
                 position: "top-right",
                 autoClose: 3000,
@@ -82,8 +83,21 @@ const CreateForm = () => {
         if (coordinates) {
             const lat = coordinates.lat;
             const lng = coordinates.lng;
-            const formDataWithCoordinates = { ...formData, lat, lng };
-            console.log(formDataWithCoordinates);
+            if (lat && lng) {
+                await getPlace(lat, lng);
+                if (errorinplace) {
+                    alert(errorinplace);
+                    toast.error("Can't find Shelter Near You", {
+                        position: "top-right",
+                        autoClose: 3000,
+                        closeOnClick: true,
+                    });
+                    return;
+                }
+                if (placeid) {
+                    console.log(placeid);
+                }
+            }
         }
     }
     return (
