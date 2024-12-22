@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useGeocoding from './Hooks/useGeocoding';
 import usePlace from './Hooks/usePlace';
+import { useNavigate } from 'react-router-dom'
 const CreateForm = () => {
     const [image, setImage] = useState(null);
     const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const CreateForm = () => {
     });
     const { coordinates, error, getCoordinates } = useGeocoding();
     const { phonenumber, errorinplace, getPhoneNumber } = usePlace();
+    const navigate = useNavigate();
     const handleInputChange = (event) => {
         const { id, value } = event.target;
         setFormData((prevState) => ({
@@ -96,6 +98,7 @@ const CreateForm = () => {
                 }
                 if (phonenumber) {
                     console.log(phonenumber);
+                    navigate('/');
                 }
             }
         }

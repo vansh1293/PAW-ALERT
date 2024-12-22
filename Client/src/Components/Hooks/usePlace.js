@@ -15,10 +15,9 @@ const usePlace = () => {
             } else if (data.error) {
                 setError(data.error);
             } else {
-                setError("Can't find Shelter Near You.");
+                setError("Can't find Clinic Near You.");
             }
         } catch (err) {
-            console.error('Error fetching place data:', err);
             setError("An error occurred while fetching clinic near you.");
         }
     };

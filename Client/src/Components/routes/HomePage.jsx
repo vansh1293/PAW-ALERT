@@ -26,7 +26,7 @@ const HomePage = () => {
                     "Protect Their World, Preserve Ours."
                 </p>
                 <Link to="/form">
-                    <button class="mt-4 bg-gradient-to-r from-violet-700 to-violet-900 hover:from-violet-600 hover:to-violet-800 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-all duration-500 ease-in-out hover:scale-110 hover:brightness-110 hover:animate-pulse active:animate-bounce">
+                    <button className="mt-4 bg-gradient-to-r from-violet-700 to-violet-900 hover:from-violet-600 hover:to-violet-800 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-all duration-500 ease-in-out hover:scale-110 hover:brightness-110 hover:animate-pulse active:animate-bounce">
                         Save Now
                     </button>
                 </Link>
