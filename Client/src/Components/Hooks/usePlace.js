@@ -6,7 +6,7 @@ const usePlace = () => {
     const getPhoneNumber = async (lat, lng) => {
         setError(null);
         try {
-            const response = await fetch(`http://localhost:3000/api/places?lat=${lat}&lng=${lng}`);
+            const response = await fetch('http://localhost:3000/api/places?lat=${lat}&lng=${lng}');
             const data = await response.json();
             if (data.formattedPhoneNumber) {
                 return data.formattedPhoneNumber;
