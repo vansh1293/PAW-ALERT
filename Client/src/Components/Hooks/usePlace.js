@@ -5,7 +5,6 @@ const usePlace = () => {
 
     const getPhoneNumber = async (lat, lng) => {
         setError(null);
-        const apikey = import.meta.env.VITE_API_KEY;
         try {
             const response = await fetch(`http://localhost:3000/api/places?lat=${lat}&lng=${lng}`);
             const data = await response.json();

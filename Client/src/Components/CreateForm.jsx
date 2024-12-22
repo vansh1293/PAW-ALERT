@@ -4,8 +4,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import useGeocoding from './Hooks/useGeocoding';
 import usePlace from './Hooks/usePlace';
 import { useNavigate } from 'react-router-dom'
+import loader from '../Assets/loader.gif'
 const CreateForm = () => {
     const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -72,8 +74,8 @@ const CreateForm = () => {
             });
             return;
         }
+        setLoading(true);
         const coordinates = await getCoordinates(location);
-        console.log('Coordinates:', coordinates);
         if (error || !coordinates) {
             toast.error(`Can't find ${location}`, {
                 position: "top-right",
@@ -96,13 +98,47 @@ const CreateForm = () => {
                     return;
                 }
                 if (phonenumber) {
-                    navigate('/');
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('image', image);
+                    formDataToSend.append('name', name);
+                    formDataToSend.append('phone', phone);
+                    formDataToSend.append('location', location);
+                    formDataToSend.append('description', description);
+                    formDataToSend.append('phone_number', phonenumber);
+                    try {
+                        const response = await fetch('http://localhost:3000/api/upload', {
+                            method: 'POST',
+                            body: formDataToSend,
+                        });
+                        const data = await response.json();
+                        if (data.error) {
+                            toast.error(data.error, {
+                                position: "top-right",
+                                autoClose: 3000,
+                                closeOnClick: true,
+                            });
+                        }
+                        else {
+                            console.log(data.imageUrl);
+                            navigate('/');
+                        }
+                    } catch (error) {
+                        toast.error(error.message, {
+                            position: "top-right",
+                            autoClose: 3000,
+                            closeOnClick: true,
+                        });
+                        console.error('Error submitting report:', error);
+                        return;
+                    } finally {
+                        setLoading(false);
+                    }
                 }
             }
         }
     }
     return (
-        <div className="overflow-y-auto w-full bg-gradient-to-tr from-black via-gray-800 to-violet-900 p-8">
+        <div className="overflow-y-auto w-full bg-gradient-to-tr from-black via-gray-800 to-violet-900 p-8 ${loading ? 'blur-sm' : ''}`}">
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-violet-700">Save a Life</h1>
             <p className="text-sm md:text-base text-gray-200 mb-8">
                 Paw Alert is a web application that allows users to report an animal in need of rescue or adoption.
@@ -169,9 +205,18 @@ const CreateForm = () => {
                         <img src={URL.createObjectURL(image)} alt="Preview" className="w-full h-auto mt-2" />
                     </div>
                 )}
+                {loading && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+                        <img
+                            src={loader}
+                            alt="Loading..."
+                            className="w-24 h-24 sm:w-36 sm:h-36 md:w-56 md:h-56"
+                        />
+                    </div>
+                )}
                 <button
                     type="submit"
-                    className=" text-white py-2 px-4 rounded-md bg-gradient-to-r from-violet-700 to-violet-900 hover:from-violet-600 hover:to-violet-800 font-bold shadow-lg transform transition-all duration-500 ease-in-out hover:brightness-110 hover:animate-pulse active:animate-bounce w-full"
+                    className=" text-white py-2 px-4 rounded-md bg-gradient-to-r from-violet-700 to-violet-900 hover:from-violet-600 hover:to-violet-800 font-bold shadow-lg transform transition-all duration-500 ease-in-out hover:brightness-110 hover:animate-pulse active:animate-bounce w-full disabled={loading} disabled:cursor-not-allowed"
                 >
                     Submit Report
                 </button>
