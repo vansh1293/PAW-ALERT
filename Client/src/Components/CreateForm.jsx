@@ -12,8 +12,8 @@ const CreateForm = () => {
         location: '',
         description: ''
     });
-    const { coordinates, error, getCoordinates } = useGeocoding();
-    const { phonenumber, errorinplace, getPhoneNumber } = usePlace();
+    const { error, getCoordinates } = useGeocoding();
+    const { errorinplace, getPhoneNumber } = usePlace();
     const navigate = useNavigate();
     const handleInputChange = (event) => {
         const { id, value } = event.target;
@@ -72,9 +72,9 @@ const CreateForm = () => {
             });
             return;
         }
-        await getCoordinates(location);
-        if (error) {
-            alert(error);
+        const coordinates = await getCoordinates(location);
+        console.log('Coordinates:', coordinates);
+        if (error || !coordinates) {
             toast.error(`Can't find ${location}`, {
                 position: "top-right",
                 autoClose: 3000,
@@ -86,9 +86,8 @@ const CreateForm = () => {
             const lat = coordinates.lat;
             const lng = coordinates.lng;
             if (lat && lng) {
-                await getPhoneNumber(lat, lng);
-                if (errorinplace) {
-                    alert(errorinplace);
+                const phonenumber = await getPhoneNumber(lat, lng);
+                if (errorinplace || !phonenumber) {
                     toast.error("Can't find Clinic Near You", {
                         position: "top-right",
                         autoClose: 3000,
@@ -97,7 +96,6 @@ const CreateForm = () => {
                     return;
                 }
                 if (phonenumber) {
-                    console.log(phonenumber);
                     navigate('/');
                 }
             }

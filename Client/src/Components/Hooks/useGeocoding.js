@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 function useGeocoding() {
-    const [coordinates, setCoordinates] = useState(null);
     const [error, seterror] = useState(null);
     const getCoordinates = async (address) => {
         seterror(null);
@@ -21,12 +20,12 @@ function useGeocoding() {
             if (!location) {
                 throw new Error("Location geometry data is unavailable.");
             }
-            setCoordinates(location);
+            return location;
         } catch (error) {
             seterror(error);
         }
     };
-    return { coordinates, error, getCoordinates };
+    return { error, getCoordinates };
 }
 
 export default useGeocoding;

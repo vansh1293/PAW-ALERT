@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 const usePlace = () => {
-    const [phonenumber, setphonenumber] = useState(null);
     const [errorinplace, setError] = useState(null);
 
     const getPhoneNumber = async (lat, lng) => {
@@ -11,7 +10,7 @@ const usePlace = () => {
             const response = await fetch(`http://localhost:3000/api/places?lat=${lat}&lng=${lng}`);
             const data = await response.json();
             if (data.formattedPhoneNumber) {
-                setphonenumber(data.formattedPhoneNumber);
+                return data.formattedPhoneNumber;
             } else if (data.error) {
                 setError(data.error);
             } else {
@@ -21,6 +20,6 @@ const usePlace = () => {
             setError("An error occurred while fetching clinic near you.");
         }
     };
-    return { phonenumber, errorinplace, getPhoneNumber };
+    return { errorinplace, getPhoneNumber };
 };
 export default usePlace;
