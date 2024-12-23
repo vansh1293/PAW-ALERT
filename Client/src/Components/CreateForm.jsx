@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useGeocoding from './Hooks/useGeocoding';
 import usePlace from './Hooks/usePlace';
-import { useNavigate } from 'react-router-dom'
-import loader from '../Assets/loader.gif'
+import { useNavigate } from 'react-router-dom';
+import loader from '../Assets/loader.gif';
+import { FaUser, FaPhoneAlt, FaMapMarkerAlt, FaRegFileImage, FaRegEdit } from 'react-icons/fa';  // Importing icons
+
 const CreateForm = () => {
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -17,6 +19,7 @@ const CreateForm = () => {
     const { error, getCoordinates } = useGeocoding();
     const { errorinplace, getPhoneNumber } = usePlace();
     const navigate = useNavigate();
+
     const handleInputChange = (event) => {
         const { id, value } = event.target;
         setFormData((prevState) => ({
@@ -31,10 +34,12 @@ const CreateForm = () => {
             setImage(file);
         }
     };
+
     const validName = /^[a-zA-Z\s.'-]+$/;
     const validPhone = /^\d{10}$/;
     const validLocation = /^[a-zA-Z0-9\s.,'-]+$/;
     const validDescription = /^[a-zA-Z0-9\s.,'-]+$/;
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const { name, phone, location, description } = formData;
@@ -171,8 +176,9 @@ const CreateForm = () => {
             }
         }
     }
+
     return (
-        <div className="overflow-y-auto w-full bg-gradient-to-tr from-black via-gray-800 to-violet-900 p-8 ${loading ? 'blur-sm' : ''}`}">
+        <div className="overflow-y-auto w-full bg-gradient-to-tr from-black via-gray-800 to-violet-900 p-8 ${loading ? 'blur-sm' : ''}">
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-violet-700">Save a Life</h1>
             <p className="text-sm md:text-base text-gray-200 mb-8">
                 Paw Alert is a web application that allows users to report an animal in need of rescue or adoption.
@@ -180,7 +186,9 @@ const CreateForm = () => {
             </p>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label htmlFor="name" className="block text-gray-200 font-semibold mb-2">Name:</label>
+                    <label htmlFor="name" className="block text-gray-200 font-semibold mb-2 flex items-center">
+                        <FaUser className="mr-2 text-violet-500" /> Name:
+                    </label>
                     <input
                         type="text"
                         id="name"
@@ -191,7 +199,9 @@ const CreateForm = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="phone" className="block text-gray-200 font-semibold mb-2">Phone Number:</label>
+                    <label htmlFor="phone" className="block text-gray-200 font-semibold mb-2 flex items-center">
+                        <FaPhoneAlt className="mr-2 text-violet-500" /> Phone Number:
+                    </label>
                     <input
                         type="tel"
                         id="phone"
@@ -202,7 +212,9 @@ const CreateForm = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="location" className="block text-gray-200 font-semibold mb-2">Location:</label>
+                    <label htmlFor="location" className="block text-gray-200 font-semibold mb-2 flex items-center">
+                        <FaMapMarkerAlt className="mr-2 text-violet-500" /> Location:
+                    </label>
                     <input
                         type="text"
                         id="location"
@@ -213,7 +225,9 @@ const CreateForm = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="description" className="block text-gray-200 font-semibold mb-2">Description:</label>
+                    <label htmlFor="description" className="block text-gray-200 font-semibold mb-2 flex items-center">
+                        <FaRegEdit className="mr-2 text-violet-500" /> Description:
+                    </label>
                     <textarea
                         id="description"
                         className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
@@ -224,7 +238,9 @@ const CreateForm = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="image" className="block text-gray-200 font-semibold mb-2">Upload an Image:</label>
+                    <label htmlFor="image" className="block text-gray-200 font-semibold mb-2 flex items-center">
+                        <FaRegFileImage className="mr-2 text-violet-500" /> Upload an Image:
+                    </label>
                     <input
                         type="file"
                         id="image"
@@ -256,7 +272,7 @@ const CreateForm = () => {
                 </button>
             </form>
         </div>
-    )
+    );
 }
 
 export default CreateForm;
