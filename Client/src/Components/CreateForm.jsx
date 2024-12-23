@@ -75,14 +75,26 @@ const CreateForm = () => {
             return;
         }
         setLoading(true);
-        const coordinates = await getCoordinates(location);
-        if (error || !coordinates) {
-            toast.error(`Can't find ${location}`, {
+        let coordinates = null;
+        try {
+            coordinates = await getCoordinates(location);
+            if (error || !coordinates) {
+                toast.error(`Can't find ${location}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    closeOnClick: true,
+                });
+                return;
+            }
+        } catch (err) {
+            toast.error('Error fetching coordinates.', {
                 position: "top-right",
                 autoClose: 3000,
                 closeOnClick: true,
             });
             return;
+        } finally {
+            setLoading(false);
         }
         if (coordinates) {
             const lat = coordinates.lat;
@@ -120,6 +132,11 @@ const CreateForm = () => {
                         }
                         else {
                             console.log(data.imageUrl);
+                            toast.success('Report submitted successfully!', {
+                                position: "top-right",
+                                autoClose: 2000,
+                                closeOnClick: true,
+                            })
                             navigate('/');
                         }
                     } catch (error) {
