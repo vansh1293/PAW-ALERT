@@ -24,7 +24,8 @@ app.get('/api/places', async (req, res) => {
     const { lat, lng } = req.query;
     console.log(lat, lng);
     const apikey = process.env.GOOGLE_API_KEY;
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&keyword=veterinary+clinic&key=${apikey}`;
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&keyword=animal+shelter+OR+animal+welfare&key=${apikey}`;
+
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
