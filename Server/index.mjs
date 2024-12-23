@@ -5,6 +5,7 @@ import cors from 'cors';
 import multer from 'multer';
 import cloudinary from 'cloudinary';
 import streamifier from 'streamifier';
+import twilio from 'twilio';
 
 const app = express();
 dotenv.config();
@@ -18,7 +19,7 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 })
-
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 app.get('/api/places', async (req, res) => {
     const { lat, lng } = req.query;
     console.log(lat, lng);
@@ -71,14 +72,32 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
                 return res.status(500).json({ error: 'Error uploading image' });
             }
             // Successfully uploaded
-            console.log(result);
+            // console.log(result);
             res.json({ message: 'Image uploaded successfully!', imageUrl: result.secure_url });
         }
     );
-
-    // Stream the buffer into Cloudinary
     streamifier.createReadStream(buffer).pipe(stream);
 });
+app.post('/api/send-sms', async (req, res) => {
+    const { to, message } = req.body;
+    const testPhoneNumber = process.env.TEST_PHONE_NUMBER;
+    console.log(testPhoneNumber, message);
+    if (!to || !message) {
+        return res.status(400).json({ error: 'Phone number and message are required' });
+    }
+    try {
+        const messageresponse = await twilioClient.messages.create({
+            body: message,
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: testPhoneNumber,
+        });
+        return res.json({ message: 'Message sent successfully' });
+    } catch (error) {
+        console.error('Error sending message:', error);
+        console.log('Twilio Error:', error.response ? error.response.body : error);
+        return res.status(500).json({ error: 'Error sending message' });
+    }
+})
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

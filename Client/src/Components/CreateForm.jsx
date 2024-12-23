@@ -93,14 +93,12 @@ const CreateForm = () => {
                 closeOnClick: true,
             });
             return;
-        } finally {
-            setLoading(false);
         }
         if (coordinates) {
             const lat = coordinates.lat;
             const lng = coordinates.lng;
             if (lat && lng) {
-                const phonenumber = await getPhoneNumber(lat, lng);
+                let phonenumber = await getPhoneNumber(lat, lng);
                 if (errorinplace || !phonenumber) {
                     toast.error("Can't find Clinic Near You", {
                         position: "top-right",
@@ -110,6 +108,7 @@ const CreateForm = () => {
                     return;
                 }
                 if (phonenumber) {
+                    phonenumber = `+91${phonenumber.replace(/\s+/g, '')}`;
                     const formDataToSend = new FormData();
                     formDataToSend.append('image', image);
                     formDataToSend.append('name', name);
@@ -131,7 +130,25 @@ const CreateForm = () => {
                             });
                         }
                         else {
-                            console.log(data.imageUrl);
+                            const smsResponse = await fetch('http://localhost:3000/api/send-sms', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    to: `${phonenumber}`,
+                                    message: `Location: ${formData.location}, Description: ${formData.description}, Image: ${data.imageUrl}`,
+                                }),
+                            });
+                            const smsData = await smsResponse.json();
+                            if (smsData.error) {
+                                toast.error(smsData.error, {
+                                    position: "top-right",
+                                    autoClose: 3000,
+                                    closeOnClick: true,
+                                });
+                                return;
+                            }
                             toast.success('Report submitted successfully!', {
                                 position: "top-right",
                                 autoClose: 2000,
