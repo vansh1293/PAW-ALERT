@@ -16,7 +16,7 @@ Welcome to Paw Alert, a platform dedicated to making a difference for injured an
 - Track the status of your report:
   - *Report Received*
   - *Help Dispatched*
-  - *Animal Rescued*
+  - *Animal Rescued* 
 - Get notifications on progress through email and SMS. -->
 
 <!-- ### 📍 Automatic Location Mapping
