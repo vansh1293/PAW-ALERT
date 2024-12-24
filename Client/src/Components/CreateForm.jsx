@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useGeocoding from './Hooks/useGeocoding';
 import usePlace from './Hooks/usePlace';
 import { useNavigate } from 'react-router-dom';
 import loader from '../Assets/loader.gif';
-import { FaUser, FaPhoneAlt, FaMapMarkerAlt, FaRegFileImage, FaRegEdit } from 'react-icons/fa';  // Importing icons
+import { FaUser, FaPhoneAlt, FaMapMarkerAlt, FaRegFileImage, FaRegEdit } from 'react-icons/fa';
+import { useLoadScript, Autocomplete } from '@react-google-maps/api';
+const libraries = ['places'];
 
 const CreateForm = () => {
     const [image, setImage] = useState(null);
@@ -19,7 +21,6 @@ const CreateForm = () => {
     const { error, getCoordinates } = useGeocoding();
     const { errorinplace, getPhoneNumber } = usePlace();
     const navigate = useNavigate();
-
     const handleInputChange = (event) => {
         const { id, value } = event.target;
         setFormData((prevState) => ({
@@ -27,6 +28,28 @@ const CreateForm = () => {
             [id]: value
         }));
     };
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: `${import.meta.env.VITE_API_KEY}`,
+        libraries,
+    });
+    const autocompleteRef = useRef(null);
+
+    const handlePlaceChanged = () => {
+        if (autocompleteRef.current) {
+            const place = autocompleteRef.current.getPlace();
+            if (place && place.formatted_address) {
+                setFormData((prevState) => ({
+                    ...prevState,
+                    location: place.formatted_address
+                }));
+            }
+        }
+    };
+
+    if (loadError || !isLoaded) {
+        return null;
+    }
+
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -215,14 +238,19 @@ const CreateForm = () => {
                     <label htmlFor="location" className="block text-gray-200 font-semibold mb-2 flex items-center">
                         <FaMapMarkerAlt className="mr-2 text-violet-500" /> Location:
                     </label>
-                    <input
-                        type="text"
-                        id="location"
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                        placeholder="Enter your location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                    />
+                    <Autocomplete
+                        onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+                        onPlaceChanged={handlePlaceChanged}
+                    >
+                        <input
+                            type="text"
+                            id="location"
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            placeholder="Enter your location"
+                            value={formData.location}
+                            onChange={handleInputChange}
+                        />
+                    </Autocomplete>
                 </div>
                 <div className="mb-4">
                     <label htmlFor="description" className="block text-gray-200 font-semibold mb-2 flex items-center">
